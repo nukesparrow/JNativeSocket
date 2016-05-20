@@ -180,7 +180,11 @@ public class NativeSocket implements Closeable {
      * @throws IOException 
      */
     public int read(byte[] buf) throws IOException {
-        return recv(buf, 0, buf.length, MSG_DONTWAIT);
+        return read(buf, 0, buf.length);
+    }
+    
+    public int read(byte[] buf, int ofs, int len) throws IOException {
+        return recv(buf, ofs, len, MSG_DONTWAIT);
     }
     
     public int blockingRead(byte[] buf) throws IOException {
