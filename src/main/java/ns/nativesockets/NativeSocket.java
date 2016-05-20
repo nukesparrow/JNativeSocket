@@ -242,7 +242,7 @@ public class NativeSocket implements Closeable {
     
     private static native int socket(int domain, int type, int protocol) throws IOException;
     private static native void close(int fd) throws IOException;
-    private static native void configureBlocking(int fd, boolean block);
+    private static native void configureBlocking(int fd, boolean block) throws IOException;
     private static native void connect(int fd, int domain, byte[] address, int port) throws IOException;
     private static native int send(int fd, byte[] buf, int flags) throws IOException;
     private static native int recv(int fd, byte[] buf, int flags) throws IOException;
