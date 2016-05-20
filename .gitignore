@@ -3,3 +3,4 @@
 /src/main/c/nbproject/
 /src/main/c/*.o
 /src/main/c/*.h
+/nb-configuration.xml
