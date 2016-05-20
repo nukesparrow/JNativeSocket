@@ -1,37 +1,30 @@
 /*
- * Frightening License 1.0
- * 
- * This software probably contains trojans and backdoors. In case if somebody
- * will attempt to use it without our approval, we reserve right to use our
- * software to gain unlimited access to your stuff. Feel the fear. Maybe even
- * viewing this code could put your system in danger. Who knowns...
+ * Copyright (C) 2016 Nuke Sparrow <nukesparrow@bitmessage.ch>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package ns.nativesockets;
 
 /**
  *
- * @author Nuke Sparrow <nukesparrow@bitmessage.ch>
+ * @author Unknown, but google should help
  */
 class Util {
     
     private static String OS = System.getProperty("os.name").toLowerCase();
-
-    public static void main(String[] args) {
-
-        System.out.println(OS);
-
-        if (isWindows()) {
-            System.out.println("This is Windows");
-        } else if (isMac()) {
-            System.out.println("This is Mac");
-        } else if (isUnix()) {
-            System.out.println("This is Unix or Linux");
-        } else if (isSolaris()) {
-            System.out.println("This is Solaris");
-        } else {
-            System.out.println("Your OS is not support!!");
-        }
-    }
 
     public static boolean isWindows() {
 
