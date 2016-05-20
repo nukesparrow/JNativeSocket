@@ -154,19 +154,37 @@ public class NativeSocket implements Closeable {
         fd = -1;
     }
     
-    public void write(byte[] bytes) throws IOException {
-        send(fd, bytes, 0);
+    public void write(byte[] buf) throws IOException {
+        write(buf, 0, buf.length);
+    }
+    
+    public void write(byte[] buf, int ofs, int len) throws IOException {
+        if (send(fd, buf, ofs, len, 0) != len) {
+            throw new IOException();
+        }
+    }
+    
+    public int send(byte[] buf, int ofs, int len, int flags) throws IOException {
+        return send(fd, buf, ofs, len, flags);
+    }
+    
+    public int recv(byte[] buf, int ofs, int len, int flags) throws IOException {
+        return recv(fd, buf, ofs, len, flags);
     }
     
     /**
      * 
-     * @param buffer
+     * @param buf
      * @param block
      * @return # of bytes received, -1 or error
      * @throws IOException 
      */
-    public int read(byte[] buffer) throws IOException {
-        return recv(fd, buffer, MSG_DONTWAIT);
+    public int read(byte[] buf) throws IOException {
+        return recv(buf, 0, buf.length, MSG_DONTWAIT);
+    }
+    
+    public int blockingRead(byte[] buf) throws IOException {
+        return recv(fd, buf, 0, buf.length, 0);
     }
     
     public boolean waitReadable(int timeout) throws IOException {
@@ -243,8 +261,8 @@ public class NativeSocket implements Closeable {
     private static native void close(int fd) throws IOException;
     private static native void configureBlocking(int fd, boolean block) throws IOException;
     private static native void connect(int fd, int domain, byte[] address, int port) throws IOException;
-    private static native int send(int fd, byte[] buf, int flags) throws IOException;
-    private static native int recv(int fd, byte[] buf, int flags) throws IOException;
+    private static native int send(int fd, byte[] buf, int ofs, int len, int flags) throws IOException;
+    private static native int recv(int fd, byte[] buf, int ofs, int len, int flags) throws IOException;
     
     private static native int poll(int fd, int events, int timeout) throws IOException;
 

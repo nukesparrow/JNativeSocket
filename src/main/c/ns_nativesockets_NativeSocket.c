@@ -195,14 +195,13 @@ JNIEXPORT void JNICALL Java_ns_nativesockets_NativeSocket_connect
  * Signature: (I[BI)I
  */
 JNIEXPORT jint JNICALL Java_ns_nativesockets_NativeSocket_send
-  (JNIEnv *env, jclass class, jint fd, jbyteArray buf, jint flags)
+  (JNIEnv *env, jclass class, jint fd, jbyteArray buf, jint ofs, jint len, jint flags)
 {
-    jint l = ((*env)->GetArrayLength(env, buf));
-    jbyte buffer[l];
+    jbyte buffer[len];
 
-    (*env)->GetByteArrayRegion(env, buf, 0, l, buffer);
+    (*env)->GetByteArrayRegion(env, buf, ofs, len, buffer);
 
-    ssize_t ns = send(fd, (void*)buffer, l, flags);
+    ssize_t ns = send(fd, (void*)buffer, len, flags);
     
     if (ns == -1) {
         throwIOExceptionWithErrno(env, strerror(errno));
@@ -218,12 +217,11 @@ JNIEXPORT jint JNICALL Java_ns_nativesockets_NativeSocket_send
  * Signature: (I[BI)I
  */
 JNIEXPORT jint JNICALL Java_ns_nativesockets_NativeSocket_recv
-  (JNIEnv *env, jclass class, jint fd, jbyteArray buf, jint flags)
+  (JNIEnv *env, jclass class, jint fd, jbyteArray buf, jint ofs, jint len, jint flags)
 {
-    jint l = ((*env)->GetArrayLength(env, buf));
-    jbyte jbuf[l];
+    jbyte jbuf[len];
 
-    ssize_t ns = recv(fd, (void*)jbuf, l, flags);
+    ssize_t ns = recv(fd, (void*)jbuf, len, flags);
     
     if (ns == -1) {
         throwIOExceptionWithErrno(env, strerror(errno));
@@ -231,7 +229,7 @@ JNIEXPORT jint JNICALL Java_ns_nativesockets_NativeSocket_recv
     }
     
     if (ns > 0) {
-        (*env)->SetByteArrayRegion(env, buf, 0, ns, jbuf);
+        (*env)->SetByteArrayRegion(env, buf, ofs, ns, jbuf);
     }
     
     return ns;
