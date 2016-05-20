@@ -1,0 +1,5 @@
+/target/
+/nbactions.xml
+/src/main/c/nbproject/
+/src/main/c/*.o
+/src/main/c/*.h
