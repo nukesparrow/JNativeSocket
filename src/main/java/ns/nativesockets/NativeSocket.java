@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.Inet6Address;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,13 +131,19 @@ public class NativeSocket implements Closeable {
         
         configureBlocking(fd, true);
         
-        if ((poll(fd, POLLERR | POLLOUT, timeout) & POLLOUT) != 0) {
+        int pr = poll(fd, POLLERR | POLLOUT, timeout);
+        
+        if ((pr & POLLERR) == POLLERR) {
+            throw new IOException("Connection failed");
+        }
+
+        if ((pr & POLLOUT) == POLLOUT) {
             return;
         }
         
         close(fd);
         fd = -1;
-        throw new IOException("Connection failed");
+        throw new IOException("Connection timed out");
     }
 
     public void connect(InetSocketAddress endpoint) throws IOException {
@@ -182,15 +187,15 @@ public class NativeSocket implements Closeable {
     public int read(byte[] buf) throws IOException {
         return read(buf, 0, buf.length);
     }
-    
+
     public int read(byte[] buf, int ofs, int len) throws IOException {
         return recv(buf, ofs, len, MSG_DONTWAIT);
     }
-    
+
     public int blockingRead(byte[] buf) throws IOException {
         return recv(fd, buf, 0, buf.length, 0);
     }
-    
+
     public boolean waitReadable(int timeout) throws IOException {
         int r = poll(fd, POLLIN | POLLERR | POLLHUP, timeout);
         
@@ -233,33 +238,33 @@ public class NativeSocket implements Closeable {
     public static final int EAGAIN = getIntConst("EAGAIN");
     public static final int EINPROGRESS = getIntConst("EINPROGRESS");
 
-    public static void main(String[] args) throws IOException {
-        try (NativeSocket s = new NativeSocket()) {
-            s.connect(new InetSocketAddress("localhost", 23), 30000);
-            
-            while (true) {
-                if (s.waitReadable(1000)) {
-                    byte[] b = new byte[16];
-                    int nr = s.read(b);
-                    if (nr > 0) {
-                        b = Arrays.copyOf(b, nr);
-                        s.write(b);
-                    }
-                    
-                    if (nr == 0) {
-                        break;
-                    }
-
-                    if (nr == -1) {
-                        System.out.println("Error? nr=-1");
-                    }
-                } else {
-                    s.write("no data\n".getBytes());
-                }
-            }
-        }
-        
-    }
+    //public static void main(String[] args) throws IOException {
+    //    try (NativeSocket s = new NativeSocket()) {
+    //        s.connect(new InetSocketAddress("localhost", 23), 30000);
+    //
+    //        while (true) {
+    //            if (s.waitReadable(1000)) {
+    //                byte[] b = new byte[16];
+    //                int nr = s.read(b);
+    //                if (nr > 0) {
+    //                    b = java.util.Arrays.copyOf(b, nr);
+    //                    s.write(b);
+    //                }
+    //
+    //                if (nr == 0) {
+    //                    break;
+    //                }
+    //
+    //                if (nr == -1) {
+    //                    System.out.println("Error? nr=-1");
+    //                }
+    //            } else {
+    //                s.write("no data\n".getBytes());
+    //            }
+    //        }
+    //    }
+    //
+    //}
     
     private static native int socket(int domain, int type, int protocol) throws IOException;
     private static native void close(int fd) throws IOException;
