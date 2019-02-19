@@ -82,9 +82,8 @@ jint throwIOException(JNIEnv *env, char *message) {
 
 jint throwIOExceptionWithErrno(JNIEnv *env, char *message) {
     jclass exClass;
-    char *className = "ns/nativesockets/NativeSocketIOException";
 
-    exClass = (*env)->FindClass(env, className);
+    exClass = (*env)->FindClass(env, "ns/nativesockets/NativeSocketIOException");
 
     jmethodID exConstr = (*env)->GetMethodID(env, exClass, "<init>", "(ILjava/lang/String;)V");
 
