@@ -134,6 +134,8 @@ public class NativeSocket implements Closeable {
         int pr = poll(fd, POLLERR | POLLOUT, timeout);
         
         if ((pr & POLLERR) == POLLERR) {
+            close(fd);
+            fd = -1;
             throw new IOException("Connection failed");
         }
 
@@ -174,6 +176,10 @@ public class NativeSocket implements Closeable {
     }
     
     public int recv(byte[] buf, int ofs, int len, int flags) throws IOException {
+        if (buf == null)
+            throw new NullPointerException();
+        if (ofs < 0 || (ofs+len) > buf.length)
+            throw new IndexOutOfBoundsException("" + ofs + ":" + len);
         return recv(fd, buf, ofs, len, flags);
     }
     
@@ -193,6 +199,8 @@ public class NativeSocket implements Closeable {
     }
 
     public int blockingRead(byte[] buf) throws IOException {
+        if (buf == null)
+            throw new NullPointerException();
         return recv(fd, buf, 0, buf.length, 0);
     }
 
